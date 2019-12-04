@@ -5,22 +5,40 @@ proc validPwd(n: int, ignoreRange: bool = false): bool =
     return false 
 
   let s = $n
-  var last: char = '0'
-  var twoPlus: bool = false
+  var
+    last: char = '0'
+    countSame: int = 1
+    twoExact: bool = false
+
   for ch in s:
     if last == ch:
-      twoPlus = true
+      countSame += 1
+    else:
+      if not twoExact:
+        twoExact = countSame == 2
+      countSame = 1
+
     if ch < last:
       # must only increment or stay the same
       return false
+
     last = ch
 
-  return twoPlus
+  if not twoExact:
+    # case where it ended on a sequence of 2 same
+    twoExact = countSame == 2
+
+  return twoExact
 
 when isMainModule:
-  assert(validPwd(111111, ignoreRange = true))
-  assert(not validPwd(223450, ignoreRange = true))
-  assert(not validPwd(123789, ignoreRange = true))
+  assert(validPwd(112233, ignoreRange = true))
+  assert(validPwd(111122, ignoreRange = true))
+  assert(not validPwd(111112, ignoreRange = true))
+  assert(validPwd(112222, ignoreRange = true))
+  assert(not validPwd(111222, ignoreRange = true))
+  assert(validPwd(123345, ignoreRange = true))
+  assert(not validPwd(123444, ignoreRange = true))
+  assert(validPwd(111122, ignoreRange = true))
 
   var count: int = 0
   for i in range:
